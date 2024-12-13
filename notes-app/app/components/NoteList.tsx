@@ -20,7 +20,7 @@ type NoteListProps = {
               >
                 Delete
               </button>
-            </li>
+            </li> 
           ))}
         </ul>
       </div>
