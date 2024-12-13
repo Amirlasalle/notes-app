@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "node server.js",
+    "lint": "next lint",
+     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@types/react": "^18.3.16",

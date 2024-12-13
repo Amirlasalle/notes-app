@@ -39,7 +39,6 @@
 //   return res.json();
 // };
 
-
 export const getNotes = async () => {
   const res = await fetch('/api/notes');
   if (!res.ok) throw new Error('Failed to fetch notes');
@@ -60,10 +59,6 @@ export const deleteNote = async (id: string) => {
   const res = await fetch(`/api/notes/${id}`, {
     method: 'DELETE',
   });
-  if (!res.ok) {
-    const errorMessage = await res.json();
-    console.error('Error deleting note:', errorMessage);
-    throw new Error(errorMessage.error || 'Failed to delete note');
-  }
+  if (!res.ok) throw new Error('Failed to delete note');
   return res.json();
 };

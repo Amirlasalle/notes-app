@@ -90,7 +90,7 @@ type TitleSectionProps = {
 // export default NotesPage;
 
 const NotesPage: React.FC = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<{ id: string; title: string; text: string }[]>([]);
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
 
@@ -100,33 +100,42 @@ const NotesPage: React.FC = () => {
 
   const fetchNotes = async () => {
     try {
-      const fetchedNotes = await getNotes();
-      setNotes(fetchedNotes);
+      const res = await fetch('/api/notes');
+      const data = await res.json();
+      setNotes(data);
     } catch (error) {
       console.error('Error fetching notes:', error);
     }
   };
 
-  const handleSaveNote = async () => {
+  const handleAddNote = async () => {
     if (!title || !text) {
       alert('Title and text are required');
       return;
     }
 
     try {
-      await saveNote({ title, text });
-      setTitle('');
-      setText('');
-      fetchNotes();
+      const res = await fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, text }),
+      });
+      if (res.ok) {
+        setTitle('');
+        setText('');
+        fetchNotes();
+      }
     } catch (error) {
-      console.error('Error saving note:', error);
+      console.error('Error adding note:', error);
     }
   };
 
   const handleDeleteNote = async (id: string) => {
     try {
-      await deleteNote(id);
-      fetchNotes();
+      const res = await fetch(`/api/notes/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        fetchNotes();
+      }
     } catch (error) {
       console.error('Error deleting note:', error);
     }
@@ -149,8 +158,8 @@ const NotesPage: React.FC = () => {
           onChange={(e) => setText(e.target.value)}
           className="border p-2 w-full"
         />
-        <button onClick={handleSaveNote} className="bg-blue-500 text-white px-4 py-2 mt-2">
-          Save Note
+        <button onClick={handleAddNote} className="bg-blue-500 text-white px-4 py-2 mt-2">
+          Add Note
         </button>
       </div>
       <ul>
