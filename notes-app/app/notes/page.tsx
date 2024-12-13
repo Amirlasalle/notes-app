@@ -24,65 +24,149 @@ type TitleSectionProps = {
   open: boolean;
 };
 
+// const NotesPage: React.FC = () => {
+//   const [notes, setNotes] = useState<Note[]>([]);
+//   const [activeNote, setActiveNote] = useState<Note | null>(null);
+//   const [viewMode, setViewMode] = useState<"view" | "add" | "edit">("add");
+
+//   useEffect(() => {
+//     const fetchNotes = async () => {
+//       const fetchedNotes = await getNotes();
+//       if (Array.isArray(fetchedNotes)) {
+//         setNotes(fetchedNotes);
+//       } else {
+//         console.error("Fetched data is not an array:", fetchedNotes);
+//       }
+//     };
+//     fetchNotes();
+//   }, []);
+
+//   const fetchNotes = async () => {
+//     const fetchedNotes = await getNotes();
+//     setNotes(fetchedNotes);
+//   };
+
+//   const handleSaveNote = async (title: string, text: string) => {
+//     if (viewMode === "edit" && activeNote) {
+//       await deleteNote(activeNote.id); // Remove the old note
+//     }
+//     await saveNote({ title, text });
+//     setActiveNote(null);
+//     setViewMode("add");
+//     fetchNotes();
+//   };
+
+//   const handleDeleteNote = async (id: string) => {
+//     await deleteNote(id);
+//     fetchNotes();
+//   };
+
+//   const handleSelectNote = (note: Note) => {
+//     setActiveNote(note);
+//     setViewMode("view");
+//   };
+
+//   return (
+//     <div className="flex h-screen bg-indigo-50">
+//       <Sidebar
+//         notes={notes}
+//         onSelect={handleSelectNote}
+//         onDelete={handleDeleteNote}
+//         activeNote={activeNote}
+//         viewMode={viewMode}
+//         setViewMode={setViewMode}
+//       />
+//       <NotesApp
+//         notes={notes}
+//         viewMode={viewMode}
+//         activeNote={activeNote}
+//         onSave={handleSaveNote}
+//         setViewMode={setViewMode}
+//       />
+//     </div>
+//   );
+// };
+
+// export default NotesPage;
+
 const NotesPage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
-  const [activeNote, setActiveNote] = useState<Note | null>(null);
-  const [viewMode, setViewMode] = useState<"view" | "add" | "edit">("add");
+  const [title, setTitle] = useState('');
+  const [text, setText] = useState('');
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      const fetchedNotes = await getNotes();
-      if (Array.isArray(fetchedNotes)) {
-        setNotes(fetchedNotes);
-      } else {
-        console.error("Fetched data is not an array:", fetchedNotes);
-      }
-    };
     fetchNotes();
   }, []);
 
   const fetchNotes = async () => {
-    const fetchedNotes = await getNotes();
-    setNotes(fetchedNotes);
+    try {
+      const fetchedNotes = await getNotes();
+      setNotes(fetchedNotes);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    }
   };
 
-  const handleSaveNote = async (title: string, text: string) => {
-    if (viewMode === "edit" && activeNote) {
-      await deleteNote(activeNote.id); // Remove the old note
+  const handleSaveNote = async () => {
+    if (!title || !text) {
+      alert('Title and text are required');
+      return;
     }
-    await saveNote({ title, text });
-    setActiveNote(null);
-    setViewMode("add");
-    fetchNotes();
+
+    try {
+      await saveNote({ title, text });
+      setTitle('');
+      setText('');
+      fetchNotes();
+    } catch (error) {
+      console.error('Error saving note:', error);
+    }
   };
 
   const handleDeleteNote = async (id: string) => {
-    await deleteNote(id);
-    fetchNotes();
-  };
-
-  const handleSelectNote = (note: Note) => {
-    setActiveNote(note);
-    setViewMode("view");
+    try {
+      await deleteNote(id);
+      fetchNotes();
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    }
   };
 
   return (
-    <div className="flex h-screen bg-indigo-50">
-      <Sidebar
-        notes={notes}
-        onSelect={handleSelectNote}
-        onDelete={handleDeleteNote}
-        activeNote={activeNote}
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-      />
-      <NotesApp
-        notes={notes}
-        viewMode={viewMode}
-        activeNote={activeNote}
-        onSave={handleSaveNote}
-        setViewMode={setViewMode}
-      />
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Notes</h1>
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="border p-2 w-full mb-2"
+        />
+        <textarea
+          placeholder="Text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="border p-2 w-full"
+        />
+        <button onClick={handleSaveNote} className="bg-blue-500 text-white px-4 py-2 mt-2">
+          Save Note
+        </button>
+      </div>
+      <ul>
+        {notes.map((note) => (
+          <li key={note.id} className="border p-2 mb-2">
+            <h2 className="font-bold">{note.title}</h2>
+            <p>{note.text}</p>
+            <button
+              onClick={() => handleDeleteNote(note.id)}
+              className="text-red-500 mt-2"
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
@@ -256,7 +340,7 @@ const Sidebar: React.FC<{
                     onClick={(e) => {
                       e.stopPropagation();
                       onDelete(note.id);
-                      window.location.reload();
+                      // window.location.reload();
                     }}
                   >
                     <IoIosTrash />
@@ -375,14 +459,6 @@ const AddNote: React.FC<{ onSave: (title: string, text: string) => void }> = ({
     </div>
   );
 };
-
-// View Note Component
-// const ViewNote: React.FC<{ note: Note }> = ({ note }) => (
-//   <div>
-//     <h3 className="text-2xl font-semibold">{note.title}</h3>
-//     <p className="mt-2">{note.text}</p>
-//   </div>
-// );
 
 const ViewNote: React.FC<{ note: Note }> = ({ note }) => {
   return (
