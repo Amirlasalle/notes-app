@@ -163,7 +163,7 @@ const Sidebar: React.FC<{
   activeNote: Note | null;
   viewMode: string;
   setViewMode: React.Dispatch<React.SetStateAction<"edit" | "add" | "view">>;
-}> = ({ notes, onSelect, onDelete, activeNote, viewMode, setViewMode }) => {
+}> = ({ notes, onSelect, onDelete, activeNote, setViewMode }) => {
   const [open, setOpen] = useState(true);
 
   return (
