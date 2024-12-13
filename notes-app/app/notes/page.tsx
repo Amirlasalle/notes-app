@@ -225,14 +225,14 @@ const Sidebar: React.FC<{
 
       <div className="space-y-1 w-full h-[105%] pb-20 flex flex-col items-center justify-start overflow-y-scroll">
         {open ? (
-          <ul className="space-y-2">
+          <ul className="w-full space-y-2">
             {notes
               .slice()
               .reverse()
               .map((note) => (
                 <li
                   key={note.id}
-                  className={`flex justify-between items-center p-2 rounded cursor-pointer ${
+                  className={`w-full flex justify-between items-center p-2 rounded cursor-pointer ${
                     activeNote?.id === note.id
                       ? "bg-indigo-100 text-indigo-800"
                       : "hover:bg-gray-100 text-slate-600"
