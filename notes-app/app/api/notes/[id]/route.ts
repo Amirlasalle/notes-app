@@ -18,7 +18,6 @@
 //   }
 // }
 
-
 // import { NextResponse } from "next/server";
 // import fs from "fs/promises";
 // import path from "path";
@@ -59,10 +58,6 @@
 //     return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
 //   }
 // }
-
-
-
-
 
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
