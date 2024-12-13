@@ -30,6 +30,14 @@ const NotesPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"view" | "add" | "edit">("add");
 
   useEffect(() => {
+    const fetchNotes = async () => {
+      const fetchedNotes = await getNotes();
+      if (Array.isArray(fetchedNotes)) {
+        setNotes(fetchedNotes);
+      } else {
+        console.error("Fetched data is not an array:", fetchedNotes);
+      }
+    };
     fetchNotes();
   }, []);
 
@@ -217,43 +225,44 @@ const Sidebar: React.FC<{
 
       <div className="space-y-1 w-full h-[105%] pb-20 flex flex-col items-center justify-start overflow-y-scroll">
         {open ? (
-          //  .slice()
-          //  .reverse()
           <ul className="space-y-2">
-            {notes.map((note) => (
-              <li
-                key={note.id}
-                className={`flex justify-between items-center p-2 rounded cursor-pointer ${
-                  activeNote?.id === note.id
-                    ? "bg-indigo-100 text-indigo-800"
-                    : "hover:bg-gray-100 text-slate-600"
-                }`}
-                onClick={() => onSelect(note)}
-              >
-                <span
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    WebkitLineClamp: 3,
-                    touchAction: "pan-y",
-                    insetBlockStart: "132px",
-                  }}
-                  className="overflow-hidden pr-2"
+            {notes
+              .slice()
+              .reverse()
+              .map((note) => (
+                <li
+                  key={note.id}
+                  className={`flex justify-between items-center p-2 rounded cursor-pointer ${
+                    activeNote?.id === note.id
+                      ? "bg-indigo-100 text-indigo-800"
+                      : "hover:bg-gray-100 text-slate-600"
+                  }`}
+                  onClick={() => onSelect(note)}
                 >
-                  {note.title}
-                </span>
-                <button
-                  className="text-red-500 hover:text-red-700"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(note.id);
-                    window.location.reload();
-                  }}
-                >
-                  <IoIosTrash />
-                </button>
-              </li>
-            ))}
+                  <span
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 3,
+                      touchAction: "pan-y",
+                      insetBlockStart: "132px",
+                    }}
+                    className="overflow-hidden pr-2"
+                  >
+                    {note.title}
+                  </span>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDelete(note.id);
+                      window.location.reload();
+                    }}
+                  >
+                    <IoIosTrash />
+                  </button>
+                </li>
+              ))}
           </ul>
         ) : (
           ""
