@@ -369,12 +369,24 @@ const AddNote: React.FC<{ onSave: (title: string, text: string) => void }> = ({
 };
 
 // View Note Component
-const ViewNote: React.FC<{ note: Note }> = ({ note }) => (
-  <div>
-    <h3 className="text-2xl font-semibold">{note.title}</h3>
-    <p className="mt-2">{note.text}</p>
-  </div>
-);
+// const ViewNote: React.FC<{ note: Note }> = ({ note }) => (
+//   <div>
+//     <h3 className="text-2xl font-semibold">{note.title}</h3>
+//     <p className="mt-2">{note.text}</p>
+//   </div>
+// );
+
+const ViewNote: React.FC<{ note: Note }> = ({ note }) => {
+  return (
+    <div>
+      <h3
+        className="text-2xl font-semibold"
+        dangerouslySetInnerHTML={{ __html: note.title }}
+      />
+      <p className="mt-2" dangerouslySetInnerHTML={{ __html: note.text }} />
+    </div>
+  );
+};
 
 // Edit Note Component
 const EditNote: React.FC<{
